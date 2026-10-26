@@ -11,6 +11,7 @@ Quick install link: https://raw.githubusercontent.com/efex85/airdcpp-adlsearch-e
 You can run a manual scan trough the Manage dropdown, or view matches. The results are posted in the Events log.
 
 Commands:
+
 /adl scan - checks the whole share against the ADL rules and reports the matches in the event log.
 /adl matches - opens the complete list of matches, grouped by category, with [not shared] marked on items that were kept out.
 /adl list - posts a short summary in the chat: the number of matches, the number kept out of the share, whether “Do not share” is on, and a count per category.
