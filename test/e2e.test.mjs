@@ -230,20 +230,38 @@ test('matches persist across restarts and are not warned about again', async () 
   assert.equal(eventsWith('setup.bat').length, before);
 });
 
-test('changing ADLSearch.xml is picked up without a restart (reload command)', async () => {
+test('changing ADLSearch.xml is NOT picked up automatically, only on reload (command or menu)', async () => {
   fs.writeFileSync(adlPath, ADL.replace('(exe|bat)', '(exe|bat|dll)'));
   const before = eventsWith('loaded 4 rules').length;
+
+  // No automatic check
+  await new Promise(r => setTimeout(r, 1500));
+  await server.fireHook('share_file_validation_hook', { path: '/share/lib1.dll' });
+  await new Promise(r => setTimeout(r, 300));
+  assert.equal(eventsWith('lib1.dll').length, 0);
+
+  // Reload from the menu
+  server.sendEvent('extension_menuitem_selected', {
+    hook_id: EXT_NAME, menu_id: 'extension', menuitem_id: 'adl_reload',
+    selected_ids: [EXT_NAME], entity_id: undefined, permissions: ['admin'], supports: ['form'], form_values: {},
+  });
+  await server.waitFor(() => eventsWith('loaded 4 rules').length === before + 1, 5000, 'menu reload');
+  await server.fireHook('share_file_validation_hook', { path: '/share/lib2.dll' });
+  await server.waitFor(() => eventsWith('lib2.dll').length === 1, 5000, 'dll warning');
+
+  // Reload by command
+  fs.writeFileSync(adlPath, ADL.replace('(exe|bat)', '(exe|bat|ocx)'));
   server.sendEvent('hub_text_command', { command: 'adl', args: ['reload'], permissions: ['admin'], owner: 'x' }, 7);
-  await server.waitFor(() => eventsWith('loaded 4 rules').length === before + 1, 5000, 'reload');
-  await server.fireHook('share_file_validation_hook', { path: '/share/lib.dll' });
-  await server.waitFor(() => eventsWith('/share/lib.dll').length === 1, 5000, 'dll warning');
+  await server.waitFor(() => eventsWith('loaded 4 rules').length === before + 2, 5000, 'command reload');
+  await server.fireHook('share_file_validation_hook', { path: '/share/ctl.ocx' });
+  await server.waitFor(() => eventsWith('ctl.ocx').length === 1, 5000, 'ocx warning');
 });
 
 test('extension menu: items are listed for this extension only and clicking one works', async () => {
   const listData = { selected_ids: [EXT_NAME], entity_id: undefined, permissions: ['admin'], supports: ['form'] };
   const listed = await server.fireHook('extension_list_menuitems', listData);
   assert.equal(listed.action, 'resolve');
-  assert.deepEqual(listed.data.menuitems.map(i => i.id), ['adl_scan', 'adl_matches']);
+  assert.deepEqual(listed.data.menuitems.map(i => i.id), ['adl_scan', 'adl_reload', 'adl_matches']);
 
   const other = await server.fireHook('extension_list_menuitems', { ...listData, selected_ids: ['airdcpp-something-else'] });
   assert.equal(other.action, 'resolve');

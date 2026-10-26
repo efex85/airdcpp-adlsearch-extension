@@ -13,7 +13,6 @@ import { scanPaths, statSize } from './scanner.js';
 
 const CONFIG_VERSION = 1;
 const SCAN_ACCESS = 'settings_edit';
-const WATCH_INTERVAL_MS = 10000;
 const WARNING_FLUSH_DELAY_MS = 10000;
 
 export const HOOK_FILE = 'share_file_validation_hook';
@@ -131,26 +130,6 @@ export default function (socket, extension) {
       }
     };
 
-    let watchedFiles = [];
-    const stopWatching = () => {
-      watchedFiles.forEach(file => fs.unwatchFile(file));
-      watchedFiles = [];
-    };
-
-    const startWatching = (adlFile) => {
-      stopWatching();
-      const files = [adlFile, path.join(path.dirname(adlFile), 'ADLSearch.ignorelist')];
-      for (const file of files) {
-        fs.watchFile(file, { interval: WATCH_INTERVAL_MS, persistent: false }, (current, previous) => {
-          if (current.mtimeMs !== previous.mtimeMs) {
-            loadAdl(false);
-          }
-        });
-      }
-
-      watchedFiles = files;
-    };
-
     // announce: post the result to the event log
     const loadAdl = async (announce) => {
       const file = resolveAdlFile();
@@ -181,10 +160,6 @@ export default function (socket, extension) {
         logger.error(text);
         postEvent(text, adl.rules.length ? 'warning' : 'error');
         return false;
-      } finally {
-        if (!stopped) {
-          startWatching(file);
-        }
       }
     };
 
@@ -500,6 +475,15 @@ export default function (socket, extension) {
             },
             filter: ({ selectedIds }) => Array.isArray(selectedIds) && selectedIds.indexOf(extension.name) !== -1,
           }, {
+            id: 'adl_reload',
+            title: 'ADL Reload',
+            icon: { semantic: 'yellow refresh' },
+            access: SCAN_ACCESS,
+            onClick: async () => {
+              await loadAdl(true);
+            },
+            filter: ({ selectedIds }) => Array.isArray(selectedIds) && selectedIds.indexOf(extension.name) !== -1,
+          }, {
             id: 'adl_matches',
             title: 'Show ADL matches',
             icon: { semantic: 'yellow list' },
@@ -519,7 +503,6 @@ export default function (socket, extension) {
 
     cleanups.push(() => {
       stopScan = true;
-      stopWatching();
       flushWarnings();
       store.flushSync();
     });
