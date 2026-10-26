@@ -5,7 +5,7 @@ Quick install link: https://raw.githubusercontent.com/efex85/airdcpp-adlsearch-e
 
 1. Place your preferred ADLSearch.xml in /config
 2. Go to Settings > Extensions > Extension catalog > Install from URL > Paste the link above to the latest build
-3. Go back to "Manage installed" and click "Manage" onb "airdcpp-adl-checker". Set the settings you want.
+3. Go back to "Manage installed" and click "Manage" on "airdcpp-adl-checker". Set the settings you want.
 4. Profit!
 
 5. You can run a manual scan trough the Manage dropdown, or view matches. The results are posted in the Events log. GL HF!
