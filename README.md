@@ -1,5 +1,9 @@
 airdcpp web client adl-search extension
+
 Lists all the unwanted files in your own share (Bonus: Also files with permission issues!)
+
+Quick ionstall link for latest version: https://github.com/efex85/airdcpp-adlsearch-extension/raw/main/quickinstall/airdcpp-adl-checker-1.0.5.tgz
+
 
 1. Get a good ADLSearch.xml to use (not included!)
 2. Place ADLSearch.xml in your /config folder
