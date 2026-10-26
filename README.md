@@ -12,10 +12,10 @@ You can run a manual scan trough the Manage dropdown, or view matches. The resul
 
 Commands:
 
-- `/adl scan - checks the whole share against the ADL rules and reports the matches in the event log.
-- `/adl matches - opens the complete list of matches, grouped by category, with [not shared] marked on items that were kept out.
-- `/adl list - posts a short summary in the chat: the number of matches, the number kept out of the share, whether “Do not share” is on, and a count per category.
-- `/adl reload - reloads ADLSearch.xml right away. This isn’t normally needed, because the file reloads on its own when it changes. The check runs every 10 seconds.
+- /adl scan - checks the whole share against the ADL rules and reports the matches in the event log.
+- /adl matches - opens the complete list of matches, grouped by category, with [not shared] marked on items that were kept out.
+- /adl list - posts a short summary in the chat: the number of matches, the number kept out of the share, whether “Do not share” is on, and a count per category.
+- /adl reload - reloads ADLSearch.xml right away. This isn’t normally needed, because the file reloads on its own when it changes. The check runs every 10 seconds.
 
 <img width="946" height="523" alt="Screenshot 2026-10-26 210906" src="https://github.com/user-attachments/assets/7e21a23c-365e-4b0d-ae16-4a28ce424f29" />
 
