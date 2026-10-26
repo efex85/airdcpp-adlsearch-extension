@@ -8,7 +8,7 @@ Quick install link: https://raw.githubusercontent.com/efex85/airdcpp-adlsearch-e
 3. Go back to "Manage installed" and click "Manage" on "airdcpp-adl-checker". Set the settings you want.
 4. Profit!
 
-5. You can run a manual scan trough the Manage dropdown, or view matches. The results are posted in the Events log. GL HF!
+You can run a manual scan trough the Manage dropdown, or view matches. The results are posted in the Events log. You can also type "/adl matches" to open up a file containing all current matches.
 
 <img width="946" height="523" alt="Screenshot 2026-10-26 210906" src="https://github.com/user-attachments/assets/7e21a23c-365e-4b0d-ae16-4a28ce424f29" />
 
