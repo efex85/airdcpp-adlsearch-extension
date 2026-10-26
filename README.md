@@ -1,5 +1,5 @@
 AirDCpp web client ADLSearch plugin \
-use this to scan your own share for unwanted files. You will need a ADLSearch.xml (not included). \
+use this to scan your own share for unwanted files. You will need a ADLSearch.xml (not included).
 
 Quick install link: https://raw.githubusercontent.com/efex85/airdcpp-adlsearch-extension/main/quickinstall/airdcpp-adl-checker-1.0.3.tgz
 
