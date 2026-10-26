@@ -49,3 +49,12 @@ test('report marks rejected items', () => {
   });
   assert.match(text, /\/a\/x\.exe {4}\[not shared\]/);
 });
+
+test('report lists unreadable items', () => {
+  const text = formatReport({
+    records: [], categoryOrder: [], adlFile: 'ADLSearch.xml', ruleCount: 1,
+    unreadable: [{ path: '/a/locked', reason: 'EACCES: permission denied' }],
+  });
+  assert.match(text, /Unreadable: {2}1 /);
+  assert.match(text, /\/a\/locked {4}\[EACCES: permission denied\]/);
+});

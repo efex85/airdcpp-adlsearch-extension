@@ -55,6 +55,10 @@ export const scanPaths = async ({ roots, rules, isIgnored, isExcluded, shouldSto
         }
       } catch (e) {
         stats.errors++;
+        if (onError) {
+          onError(fullPath, e);
+        }
+
         return;
       }
     }

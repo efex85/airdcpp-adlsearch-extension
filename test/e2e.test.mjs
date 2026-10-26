@@ -213,12 +213,31 @@ test('/adl matches opens the report in the viewer (feature level 6)', async () =
   assert.deepEqual(server.state.viewed[0].data, { text: true });
 });
 
+test('items that could not be read are counted and listed in /adl matches', async () => {
+  // (a broken symbolic link can't be read; permission errors can't be produced reliably when the tests run as root)
+  fs.symlinkSync(path.join(tmp, 'does-not-exist'), path.join(shareRoot, 'broken-link'));
+  const scans = eventsWith('scan completed').length;
+  server.sendEvent('hub_text_command', { command: 'adl', args: ['scan'], permissions: ['admin'], owner: 'x' }, 7);
+  await server.waitFor(() => eventsWith('scan completed').length === scans + 1, 8000, 'second scan');
+  assert.match(eventsWith('scan completed').at(-1).text, /1 items could not be read \(listed in \/adl matches\)/);
+
+  const uploads = server.state.uploads.length;
+  server.sendEvent('hub_text_command', { command: 'adl', args: ['matches'], permissions: ['admin'], owner: 'x' }, 7);
+  await server.waitFor(() => server.state.uploads.length === uploads + 1, 8000, 'matches report');
+  const body = server.state.uploads.at(-1).body;
+  assert.match(body, /Unreadable: {2}1 /);
+  assert.match(body, /Could not be read during the last scan/);
+  assert.match(body, /broken-link {4}\[ENOENT: does not exist/);
+  assert.match(body, /setup\.bat/);
+});
+
 test('matches persist across restarts and are not warned about again', async () => {
   await stopExtension();
   assert.ok(fs.existsSync(path.join(configPath, 'matches.json')), 'matches.json written on exit');
   const saved = JSON.parse(fs.readFileSync(path.join(configPath, 'matches.json'), 'utf8'));
   const setupBat = path.join(shareRoot, 'Release', 'setup.bat');
   assert.ok(saved.matches.some(m => m.path === setupBat));
+  assert.equal(saved.unreadable.length, 1);
 
   server.state.ready = false;
   server.state.hooks = {};

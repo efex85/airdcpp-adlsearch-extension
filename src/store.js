@@ -12,16 +12,21 @@ const SAVE_DELAY_MS = 3000;
 export const createStore = (filePath, logger) => {
   /** @type {Map<string, {path: string, type: 'file'|'directory', categories: string[], action: string, firstSeen: string}>} */
   let matches = new Map();
+  /** @type {{path: string, reason: string}[]} items that could not be read during the last scan */
+  let unreadable = [];
   let saveTimer;
   let dirty = false;
 
-  const serialize = () => JSON.stringify({ version: 1, matches: [...matches.values()] });
+  const serialize = () => JSON.stringify({ version: 1, matches: [...matches.values()], unreadable });
 
   const load = () => {
     try {
       const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
       if (data && data.version === 1 && Array.isArray(data.matches)) {
         matches = new Map(data.matches.filter(m => m && typeof m.path === 'string').map(m => [m.path, m]));
+        if (Array.isArray(data.unreadable)) {
+          unreadable = data.unreadable.filter(u => u && typeof u.path === 'string');
+        }
       }
     } catch (e) {
       if (e.code !== 'ENOENT') {
@@ -82,6 +87,11 @@ export const createStore = (filePath, logger) => {
       return matches.size;
     },
     all: () => [...matches.values()],
+    getUnreadable: () => unreadable,
+    setUnreadable: (list) => {
+      unreadable = list;
+      scheduleSave();
+    },
 
     // Returns true if the path was not known before
     upsert: (record) => {

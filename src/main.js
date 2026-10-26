@@ -22,6 +22,21 @@ const hasScanAccess = (permissions) => {
   return permissions.indexOf('admin') !== -1 || permissions.indexOf(SCAN_ACCESS) !== -1;
 };
 
+const READ_ERRORS = {
+  EACCES: 'permission denied',
+  EPERM: 'operation not permitted',
+  ENOENT: 'does not exist (broken link, or removed during the scan)',
+  ELOOP: 'too many levels of symbolic links',
+  ENOTDIR: 'not a directory',
+  EIO: 'input/output error',
+  ENAMETOOLONG: 'path too long',
+};
+
+const describeReadError = (e) => {
+  const meaning = READ_ERRORS[e.code];
+  return meaning ? `${e.code}: ${meaning}` : (e.code ? `${e.code}: ${e.message}` : e.message);
+};
+
 const getSettingDefinitions = () => [
   {
     key: 'check_share_changes',
@@ -269,12 +284,16 @@ export default function (socket, extension) {
         const groupedRoots = await socket.get('share/grouped_root_paths');
         const roots = [...new Set(groupedRoots.reduce((reduced, group) => reduced.concat(group.paths), []))];
 
+        const unreadable = [];
         const { results, stats } = await scanPaths({
           roots,
           rules: adl.rules,
           isIgnored,
           shouldStop: () => stopScan,
-          onError: (itemPath, e) => logger.verbose(`Scan: failed to read ${itemPath}: ${e.message}`),
+          onError: (itemPath, e) => {
+            logger.verbose(`Scan: failed to read ${itemPath}: ${e.message}`);
+            unreadable.push({ path: itemPath, reason: describeReadError(e) });
+          },
         });
 
         if (stopScan) {
@@ -290,12 +309,13 @@ export default function (socket, extension) {
 
         const newRecords = records.filter(record => !store.get(record.path));
         store.replaceAll(records);
+        store.setUnreadable(unreadable);
         newRecords.forEach(record => warn(describe(record, false)));
 
         const seconds = ((Date.now() - startTime) / 1000).toFixed(1);
         let text = `ADL checker: scan completed in ${seconds} s: ${stats.files} files and ${stats.directories} directories checked, ${records.length} matches (${newRecords.length} new)`;
         if (stats.errors) {
-          text += `, ${stats.errors} items could not be read`;
+          text += `, ${stats.errors} items could not be read (listed in /adl matches)`;
         }
 
         flushWarnings();
@@ -315,6 +335,7 @@ export default function (socket, extension) {
       categoryOrder: adl.categoryOrder,
       adlFile: adl.file || resolveAdlFile(),
       ruleCount: adl.rules.length,
+      unreadable: store.getUnreadable(),
     });
 
     // Opens the text in the viewer of the application (same method as in the release validator extension)

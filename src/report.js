@@ -38,7 +38,7 @@ const countTypes = (records) => {
 };
 
 // Full list (same layout as the output of adlchecker.py: category, followed by the paths)
-export const formatReport = ({ records, categoryOrder, adlFile, ruleCount, now = new Date() }) => {
+export const formatReport = ({ records, categoryOrder, adlFile, ruleCount, unreadable = [], now = new Date() }) => {
   const { files, directories } = countTypes(records);
   const lines = [
     'ADL checker: matched items',
@@ -46,6 +46,7 @@ export const formatReport = ({ records, categoryOrder, adlFile, ruleCount, now =
     `ADL file:    ${adlFile}`,
     `Rules used:  ${ruleCount}`,
     `Matches:     ${records.length} (${files} files, ${directories} directories)`,
+    `Unreadable:  ${unreadable.length} (items the last scan could not read)`,
     '',
   ];
 
@@ -60,13 +61,23 @@ export const formatReport = ({ records, categoryOrder, adlFile, ruleCount, now =
 
   if (!records.length) {
     lines.push('No matches.');
+    lines.push('');
+  }
+
+  if (unreadable.length) {
+    lines.push('Could not be read during the last scan (these were not checked)');
+    for (const item of [...unreadable].sort((a, b) => a.path.localeCompare(b.path))) {
+      lines.push(`${item.path}    [${item.reason}]`);
+    }
+
+    lines.push('');
   }
 
   return lines.join('\n');
 };
 
 // Short overview for chat
-export const formatSummary = ({ records, categoryOrder, adlFile, ruleCount, rejectEnabled }) => {
+export const formatSummary = ({ records, categoryOrder, adlFile, ruleCount, rejectEnabled, unreadable = [] }) => {
   const { files, directories } = countTypes(records);
   const rejected = records.filter(r => r.action === ACTION_REJECTED).length;
   const lines = [
@@ -80,7 +91,11 @@ export const formatSummary = ({ records, categoryOrder, adlFile, ruleCount, reje
     lines.push(`  ${category}: ${items.length}`);
   }
 
-  if (records.length) {
+  if (unreadable.length) {
+    lines.push(`Items the last scan could not read: ${unreadable.length}`);
+  }
+
+  if (records.length || unreadable.length) {
     lines.push('Use /adl matches to open the complete list');
   }
 
