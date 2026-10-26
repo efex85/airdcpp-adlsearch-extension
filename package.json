@@ -1,0 +1,29 @@
+{
+  "name": "airdcpp-adl-checker",
+  "version": "1.0.3",
+  "description": "Checks the share against an ADLSearch.xml file: warns in the event log, can keep matching files out of share and lists all matches",
+  "license": "MIT",
+  "author": {
+    "name": "ADL checker"
+  },
+  "private": true,
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "test": "node --test test/*.test.mjs",
+    "pack": "node tools/pack.mjs"
+  },
+  "airdcpp": {
+    "apiVersion": 1,
+    "minApiFeatureLevel": 4,
+    "signalReady": true
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "airdcpp-extension": "2.0.0-beta.2",
+    "airdcpp-apisocket": "3.0.0-beta.14",
+    "airdcpp-extension-settings": "1.2.2",
+    "fast-xml-parser": "^4.5.0",
+    "esbuild": "^0.25.0"
+  }
+}

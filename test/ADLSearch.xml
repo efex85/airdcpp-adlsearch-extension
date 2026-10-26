@@ -1,0 +1,665 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<ADLSearch>
+	<SearchGroup>
+		<Search>
+			<SearchString RegEx="0">Clean.ADL.Anti.RAR.v2.07-ShareCare (2021-07-18).</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory> </DestDirectory>
+			<AdlsComment/>
+			<IsActive>0</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="0">    ADLSearch for AirDC++ 3.xx and newer clients and will work with DC++ as well</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory> </DestDirectory>
+			<AdlsComment/>
+			<IsActive>0</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="0">    A merge between the most trustworthy ADLs the last couple of years - then finetuned since Jan. 2017. Made by Slemo, HnieX, StarChild &amp; Sopor</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory> </DestDirectory>
+			<AdlsComment/>
+			<IsActive>0</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="0">    This will never be complete, but if you use it, use it with care. Constructive criticism is more that welcome, we're sure you know where to find us :)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory> </DestDirectory>
+			<AdlsComment/>
+			<IsActive>0</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?:^.)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Too Small File  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>10</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?!.*\.(?:diz|m3u|nfo|sfv)$).*$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Possibly Too Small File  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>36</MaxSize>
+			<MinSize>11</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?!.*[-._]S\d{2}E\d{2}[-._]).*[\\/][^\\/]+\.nfo$)</SearchString>
+			<SourceType>Full Path</SourceType>
+			<DestDirectory>&lt;  Possibly Too Small File  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>36</MaxSize>
+			<MinSize>11</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?!.*\.(?:[acr-xz0-9]\d{2}|cue|diz|m3u|nfo|rar|sfv|zip)$).*$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Possibly Too Small File  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>1024</MaxSize>
+			<MinSize>37</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:\.(?:c\d{2}|ace|png|jpe?g)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Possibly Too Large  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>1023</MaxSize>
+			<MinSize>128</MinSize>
+			<SizeType>MiB</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?!.*\.(?:flac|mp3)$).*$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Possibly Too Large  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>1024</MinSize>
+			<SizeType>MiB</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:\.(?:[a-z0-9]\d{2}|rar)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Possibly Too Large  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>1000000001</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:\.z(?:\d{2}|ip)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Possibly Too Large Zip  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>1024</MaxSize>
+			<MinSize>250</MinSize>
+			<SizeType>MiB</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:\.vob$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Wrong Sample Size  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>512</MaxSize>
+			<MinSize>101</MinSize>
+			<SizeType>MiB</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:[-._]BDr[-._][^\\/]+[\\/]sample[\\/].*\.(?:m2)?ts$)</SearchString>
+			<SourceType>Full Path</SourceType>
+			<DestDirectory>&lt;  Wrong Sample Size  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>1023</MaxSize>
+			<MinSize>251</MinSize>
+			<SizeType>MiB</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?!.*(?:(?:19|20)[0-9]{2}|sample|m.{0,2}vid[sz]|musi[ck].{0,2}vid)).*\.(?:avi|m[24ko]v|mp4|mpe?g|wmv)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Possibly Unpacked  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>356</MinSize>
+			<SizeType>MiB</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:\.(?:cue|log(?:\.jpg)?|m3u|nfo|sfv)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  CUE | LOG | M3U | NFO | SFV Way Too Big  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>768</MinSize>
+			<SizeType>KiB</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:[-._](?:bad[1-9]?|md[2-6]|missing|p\d{2}|par[23]?|rev|sha1?)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  SFV | CRC Check  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:(?:[^\w]*(\d{3}(?:\.\d)?\x25|All-Files-CRC-OK|\-\sCOMPLETE\s|xCOMPLETEx|sfv0k|\dkbps\s|[\s_](?:screens|votes)\s|\(\d{1,3}F\)|\(\d{1,3}[kMG]B\))[^\w]*)|\[\d*[\s_-]of[\s_-]\d*\]|(?:^\-?\[IMDB\])|\[Cd5Coll3ct0r\])</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  SFV | CRC Check  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?:.*auCDtect|.*audiochec?ker|results|rushchk|ufxpcrc|WS_FTP)\.(?:log(?:\.(?:jpg|nfo))?|nfo)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  SFV | CRC Check  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>767</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>KiB</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?:[^a-z]{1,2}(?:BP|(?:in)?complete|IMDB|missing[^a-z]files|nuked?|(?:wrong[^a-z])?nfo|no[^a-z](?:nfo|proof|sfv|sample))[^a-z]|NUKED-.))</SearchString>
+			<SourceType>Directory</SourceType>
+			<DestDirectory>&lt;  SFV | CRC Check  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:\.(?:[r-x]\d{2}|rar)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  SFV | CRC Error  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>15000064</MaxSize>
+			<MinSize>15000064</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:\.(?:[r-x]\d{2}|rar)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  SFV | CRC Error  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>50000384</MaxSize>
+			<MinSize>50000384</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:(?:S\d{2}|\.EP?\d{2}|\.\dX\d{2}\D|\.\d{3}\.).*(?&lt;!sample)\.(?:avi|m(?:pe?g|ov)|mp4|wmv)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Unpacked Series  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>80</MinSize>
+			<SizeType>MiB</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?:\d{5}|VIDEO_TS|VTS_\d{2}_.*)\.(BUP|IFO|m2ts|MPG|VOB)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Unpacked Video  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?:AUDIO_TS|BDMV|CERTIFICATE|VIDEO_TS)$)</SearchString>
+			<SourceType>Directory</SourceType>
+			<DestDirectory>&lt;  Unpacked Video  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:\.(?:(?:\x21(?:[acrqu]t|bc|bl))|(?:bc|ut)\x21|dat|torrent)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Torrent Files  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:(?&lt;![-_])\(\d{1,2}\)\.\w{2,4}$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Duplicate Files  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^.{0,2}(?:kopia|copy|kopi|kopie|kopio|copie|copia)(?:\(\d{0,2}\))?\s)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Duplicate Files  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^.{0,2}(?:kopia|copy|kopi|kopie|kopio|copie|copia)(?:\(\d{0,2}\))?\s)</SearchString>
+			<SourceType>Directory</SourceType>
+			<DestDirectory>&lt;  Duplicate Folders  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?!.*(?:(?:\.(?:\d{2,3}|avi|c13|int\.nfo|mp4|S\d{1,2}|ts|wmv)|read\.nfo)\.[a-z0-9]{2,4}|\.log\.jpg|\.rar\.\d{3})$).*(?:\.(?:[acr-uz0-9]\d{2}|ace|arj|asf|avi|cue|f4v|flac|jpe?g|log|m2ts|m2p|m[24ko]v|m3u|mp[34]|mpe?g|nfo|png|rar|sfv|thm|ts|vob|wmv|zip)){2}$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Possibly Duplicate File Extension  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?:^[^\s]*?\s)</SearchString>
+			<SourceType>Directory</SourceType>
+			<DestDirectory>&lt;  Improper Dirname  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:[^a-z0-9()_.-][^-]*-\w+$)</SearchString>
+			<SourceType>Directory</SourceType>
+			<DestDirectory>&lt;  Improper Dirname  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^@eaDir$)</SearchString>
+			<SourceType>Directory</SourceType>
+			<DestDirectory>&lt;  Improper Dirname  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:[^a-z0-9_.()-])</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Improper Filename  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:[\\/]proof[\\/](?!.*\.(?:[r-x]\d{2}|jpe?g|m2ts|png|rar|sfv)$).*$)</SearchString>
+			<SourceType>Full Path</SourceType>
+			<DestDirectory>&lt;  Improper Proof File Extension  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?!-FX-|_nds-lite\.nfo$)(?:[-._)]|\([-._()]))</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Suspicious Filename  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^\d{9})</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Suspicious Filename  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?!(?:00-254-254-2012|108-1861-2010|6581|707|8088)\.nfo$)[-._()0-9]+\.(?!([acr-xz0-9]\d{2}|ace|arj|cue|flac|jpe?g|m3u|mp3|png|rar|sfv|zip)$)[^.]+$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Suspicious Filename  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(album|artist|boot|changelog|_?imdb_.*|_imdb|[^a-z]*(?:bok|cd|dvd|media)?info[^a-z]*|install|missing|movie|MP3Test\.log|no|no[-._]?nfo|notes|placeholder|too[-._]old[-._]for[-._](?:m3u|nfo|sfv)|(?:[^a-z]*(complete|proper|tracklist(?:ing)?))+[^a-z]*|tvshow|torrent)\.(?:m3u|nfo|sfv|txt)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Anti-RAR  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>767</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>KiB</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?:\d+|(?:audio|artist)?[-._]*track[-._]*\d.*)\.(?:cue|m3u|mp3|flac)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Anti-RAR: MUSiC  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:(?:^(?:VTS_\d{2}_\d|(?:Zune)?AlbumArt)|\((?:Small|Medium|Large|Custom)\)).*\.(?:jpe?g|png)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Anti-RAR: PiCTURE  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?:[^a-z]*(?:(?:^[a-z][^a-z]|[ab][^a-z]|\d{2}x\d{2}|album|and|art|artworks?|bac?k|background|banner|bar|bd|book(?:let)?|box|character|case|cd|clear|copy|cover|cstm|custom|danish|dis[ck]|dvd|english|fanart|finnish|folder|fram|front|german|i[ck]on|in|info|inlay|inner|insert|label|landscape|large|left|logo|medium|mini|movie(?:set)?|nail|norwegian|obj\d{2}[^a-z][a-z]|out|outer|outlay|p[gm]|photo|picture|plex|poster|rear|resize|right|sam|scan(?:nen)?|screen[sz]?|season|set|shot|sid[ae]|sleeve|small|snap|sticker|swedish|thumbs?|top|tracklist(?:ing)?|tray|tvix|uk|us)(?:[^a-z]+([a-d])\1?)?[^a-z]*)+)\.(?:jpe?g|png)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Anti-RAR: PiCTURE  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:(?:[^a-z]((?:cdcovers|FreeCovers|GoZmit|Mr_DVD_Cover|swecoverdb|swedb)[^a-z].*|sample_s)|_tvm)\.(?:jpe?g|png)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Anti-RAR: PiCTURE  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^extra(?:fanart|thumbs)$)</SearchString>
+			<SourceType>Directory</SourceType>
+			<DestDirectory>&lt;  Anti-RAR: PiCTURE  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^[^a-z]*(?:art|artworks?|images|labels?|scans?|screens?|screenshots?)[^a-z]*$)</SearchString>
+			<SourceType>Directory</SourceType>
+			<DestDirectory>&lt;  Anti-RAR: PiCTURE  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^.{1,2}\.(?:jpe?g|png)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Anti-RAR: PiCTURE  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?!(?:^|.*?[-._()\\/])XXX[-._()\\/]).+[\\/][^a-z]*Covers?[^a-z]*[\\/])</SearchString>
+			<SourceType>Full Path</SourceType>
+			<DestDirectory>&lt;  Possibly Anti-RAR: COVERS  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:(?:\.(?:srt|sub|idx)|((?:^|[-._])(?:Addic7ed[-._]com|divxsweden[-._]net|Moviesubtitles[-._]org|OpenSubtitles|Subscene|SubtitleSource|undertexter).*)\.(?:nfo|rar|sfv|zip))$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Anti-RAR: SUBS  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?:track\d+|\d+[-._]track|\d{1,2})\.[a-z0-9]{2,4}$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Possibly Anti-RAR  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?!abd-missing|n-missing|pme-missing|sharphd-missing)(?:.*[-._]+)?(?:no[-._]*nfo.*|missing(?:[-._]*nfo)?)\.nfo$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Possibly Anti-RAR  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>767</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>KiB</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?:[a-f0-9]{16}|[a-f0-9]{32}|[a-f0-9]{40}|[a-z0-9]{26,27})\.[^.]+$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Hash Filename  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:[-._](?:(?:HD|DivX|DKSub|SWESub|DVDR?|BD)(?:SCR|SCREENER|CAM)|(?-i:BLUR(?:RED)?)|(?-i:CAM)|CROPPED|HC|PDVD(?:R|RiP)?|HDT[CS]|TC|TELECINE|TELESYNC|R5|(?-i:TS)|SCR|SCREENER|WORKPRINT)[-._](?:.+[-._])?(?:BD25|BD50|BDr|BLURAY|CUSTOM|CSTM|DivX|DVD[59R]|[hx]\.?26[45]|MP4|NTSC|PAL|S?VCD|XviD)[-._]|[-._]DVDSCR-|-Cheetah-TV$|-PsO$)</SearchString>
+			<SourceType>Directory</SourceType>
+			<DestDirectory>&lt;  Unwanted Low Quality  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?!.*\.(?:[acr-xz0-9]\d{2}|ace|arj|asf|avi|cue|f4v|flac|jpe?g|log|m2ts|m2p|m[24ko]v|m3u|mp[34]|mpe?g|nfo|png|rar|sfv|thm|ts|vob|wmv|zip)$).*$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Unallowed File Extension  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?!.*[-._()](?:FLAC|LOSSLESS)[-._()]).*[\\/][^\\/]+(?:\.log|[-.]log\.jpg)$)</SearchString>
+			<SourceType>Full Path</SourceType>
+			<DestDirectory>&lt;  Unallowed File Extension: Non FLAC Log  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:(?:^|[^a-z])www\.(?!-upe|a-wax|crazytown|djangelino|djzany|einliebeslied|fear|girl|love|lowprofilerecords|matapa|memory|mikecontrol|mssanchalive|omnibotnet|pitchshifter|stoppamej|thug|tony_h))</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Advertising  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:(?:^|[^a-z])www\.(?!a-wax|File\.Share\.Pro|HereComesEverybody|Mssanchalive|Photo\.Album|SUNWAVE|Therealblackwallstreet|Thug|Tony_H|tree))</SearchString>
+			<SourceType>Directory</SourceType>
+			<DestDirectory>&lt;  Advertising  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:^(?:(?:___mfiso___|00-CRC.100|15638|a51|ad|aks|alpha|ancient|aor|aph|arrakis|arrested|av|b1|batman|BBFiNEST|bj|bl0w|bldrose|bliz|blw(?:_pred)?|bps-0wnz|bub|canada|car|cb|chs|chs2k3|cky|cl|cm|cmt|cmtdvd|cny|coj|coke|cps|csht|DaFat|db|devotion|di|dim|dl|dl2k3|dls|dm|dmg|dni|dpg|ds|dv|e|echoBase|efnet|elitewebt3|emp|enc|evn|fen|ffw-pre|fi|firesite|fireslut|fucktheclones\.org|g|gdh|hcd?|hbk|heaven|hg|hsh|ice\.cube|imdb|inferno|Infinity_97|inNYC|invisible|jh|joel|kane|kane-xmas|kolla|light|lips|lts|ltz|me|mgw|mhd|Milestone|mm|mo[bg]|mojo|motiv8|mro|mw|nc|nearfuture|nf-20\d{2}|nia|nl|nN|noFuture|NordCore|nuckrah|nud|oz|pandemon|paranoia|pbox|ph|phc|pike|pirazy|pjx|pl|pld|PMS|pox|pr|pre|ptr|punkmp3s|quad(?:con)?|qwest|rarbg|risc97|rl2k15|rsh|rsn|(?:hs-|site\.|slm-)?rules|s51|s71|scc|scd|sfd|sh|sinecur|sky|slr|sod|spy|star(?:base)?|strictly|\d?superbits|swiss-hq|t4-pre|tager|tc|tcf|tcp|tct|temple|the_cube|thecasino|tht|ti|tm[lt]|tnl|tox|tqs|treetod|trade|trope2k4|tss?|tvmaze|tw[lh]|twltwhtwilight|ty|tz|usux|Valhalla|vdrlake|vmp3|vsf|west|wizardlw|wu-chamber|zdz|zn)\.nfo|tde\.png|nf-20\d{2}\.jpg)$)</SearchString>
+			<SourceType>Filename</SourceType>
+			<DestDirectory>&lt;  Site-NFO  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>767</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>KiB</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:[-._](?:CSTM|CUSTOM)[-._](?:.+[-._])?(?:BD25|BD50|BDr|BLURAY|DivX|DVD[59R]?|[hx]\.?26[45]|MP4|NTSC|PAL|S?VCD|WMV|XviD)[-._])</SearchString>
+			<SourceType>Directory</SourceType>
+			<DestDirectory>&lt;  Custom All: Consider Newer Release  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:Srpski|A\.Serbian\.Film|OmarMateen|rapelay)</SearchString>
+			<SourceType>Directory</SourceType>
+			<DestDirectory>&lt;  Illegal Stuff  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+		<Search>
+			<SearchString RegEx="1">(?i:-MeGaHeRTZ$)</SearchString>
+			<SourceType>Directory</SourceType>
+			<DestDirectory>&lt;  Trojan|Virus Spreader  &gt;</DestDirectory>
+			<AdlsComment/>
+			<IsActive>1</IsActive>
+			<MaxSize>-1</MaxSize>
+			<MinSize>-1</MinSize>
+			<SizeType>B</SizeType>
+			<IsAutoQueue>0</IsAutoQueue>
+		</Search>
+	</SearchGroup>
+</ADLSearch>
