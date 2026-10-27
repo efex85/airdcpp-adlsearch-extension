@@ -14,7 +14,7 @@ Quick install link for latest version: https://github.com/efex85/airdcpp-adlsear
 Available commands:
 - /adl scan - Scans your share
 - /adl matches - Shows your matched files (bonus: also files with permission errors)
-- /adl list - a small quick info posten in the chat (for your eyes only)
+- /adl list - a small quick info posted in the chat (for your eyes only)
 - /adl reload - Reloads the ADLSearch.xml (if you make changes to it and dont want to restart the client)
 
 You can also access the above funtions trough the Manage dropdown for the extension.
