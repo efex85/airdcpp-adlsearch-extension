@@ -1,6 +1,7 @@
 airdcpp web client adl-search extension
 
 Lists all the unwanted files in your own share (Bonus: Also files with permission issues!)
+Scans files and directories after they are hashed into share, with warnings in Event Log on match. 
 
 Quick install link for latest version: https://github.com/efex85/airdcpp-adlsearch-extension/raw/main/quickinstall/airdcpp-adl-checker-1.0.7.tgz
 
