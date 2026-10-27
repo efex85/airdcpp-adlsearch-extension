@@ -26,6 +26,7 @@ const hasScanAccess = (permissions) => {
 // Maximum time for answering a file/directory check of the application
 const HOOK_DEADLINE_MS = 3000;
 const SLOW_HOOK_MS = 500;
+const STATS_INTERVAL_MS = 10000;
 const TIMED_OUT = Symbol('timed out');
 
 const READ_ERRORS = {
@@ -49,13 +50,13 @@ const getSettingDefinitions = () => [
     title: 'Check files and directories when they are added to share',
     type: 'boolean',
     default_value: true,
-    help: 'Matches are reported as warnings in the event log. Existing files are checked again during share refreshes.',
+    help: 'Matches are reported as warnings in the event log: new directories when they are added, and the files of a directory after it has been hashed.',
   }, {
     key: 'reject_matched',
     title: 'Do not share matched files and directories',
     type: 'boolean',
     default_value: false,
-    help: 'Matched files are left out from share on the next refresh. Directories are left out only when they are new (the whole directory is then not shared).',
+    help: 'Matched files are left out from the share. Directories are left out only when they are new (the whole directory is then not shared). NOTE: the application then asks the extension about every file during share refreshes, which can make refreshes of big shares much slower. Leave this off if you only want warnings.',
   }, {
     key: 'respect_ignorelist',
     title: 'Ignore the items listed in ADLSearch.ignorelist',
@@ -196,6 +197,41 @@ export default function (socket, extension) {
 
     let loggedPayload = {};
 
+    // Checks one item against the rules and records/reports a match.
+    // Returns the reject message if the item must be left out of the share (only when canReject is true).
+    const evaluateItem = async (itemPath, isDirectory, getSize, canReject) => {
+      const item = toItem(itemPath, isDirectory);
+      if (isIgnored(item.path)) {
+        store.remove(item.path);
+        return null;
+      }
+
+      const matched = await matchItem(adl.rules, item, getSize);
+      if (!matched.length) {
+        store.remove(item.path);
+        return null;
+      }
+
+      const categories = categoriesOf(matched);
+      const reject = canReject && !!settings.getValue('reject_matched');
+      const existing = store.get(item.path);
+
+      const record = {
+        path: item.path,
+        type: isDirectory ? 'directory' : 'file',
+        categories,
+        // An item that was left out of the share stays marked as such when it's seen again by a later check
+        action: reject || (!canReject && existing && existing.action === ACTION_REJECTED) ? ACTION_REJECTED : ACTION_WARNED,
+      };
+
+      const isNew = store.upsert(record);
+      if (isNew) {
+        warn(describe(record, record.action === ACTION_REJECTED));
+      }
+
+      return reject ? `ADL match: ${categories.join(', ')}` : null;
+    };
+
     // AirDC++ waits for the answer of every file during share refreshes, so the answer must always be quick.
     // The hook data has `path` and `size` (seen in the extension log), so the file system is not touched at all.
     const checkHookItem = async (hookName, data, isDirectory) => {
@@ -218,40 +254,35 @@ export default function (socket, extension) {
         logger.info(`${hookName} data properties: ${Object.keys(data).join(', ')}`);
       }
 
-      const item = toItem(itemPath, isDirectory);
-      if (isIgnored(item.path)) {
-        store.remove(item.path);
-        return null;
-      }
-
       const getSize = Number.isFinite(data.size) && data.size >= 0 ? async () => data.size : statSize;
-      const matched = await matchItem(adl.rules, item, getSize);
-      if (!matched.length) {
-        store.remove(item.path);
-        return null;
-      }
-
-      const categories = categoriesOf(matched);
-      const reject = !!settings.getValue('reject_matched');
-
-      const record = {
-        path: item.path,
-        type: isDirectory ? 'directory' : 'file',
-        categories,
-        action: reject ? ACTION_REJECTED : ACTION_WARNED,
-      };
-
-      const isNew = store.upsert(record);
-      if (isNew) {
-        warn(describe(record, reject));
-      }
-
-      return reject ? `ADL match: ${categories.join(', ')}` : null;
+      return evaluateItem(itemPath, isDirectory, getSize, true);
     };
+
+    // Counters for the extension log (to see how the application uses the hooks)
+    const hookStats = { received: 0, answered: 0, inFlight: 0, slowest: 0, reported: 0 };
+    let lastTick = Date.now();
+    const statsTimer = setInterval(() => {
+      const now = Date.now();
+      const lag = now - lastTick - STATS_INTERVAL_MS;
+      lastTick = now;
+      if (lag > 2000) {
+        logger.warn(`The extension was blocked for about ${lag} ms`);
+      }
+
+      if (hookStats.received !== hookStats.reported || hookStats.inFlight > 0) {
+        logger.info(`File checks: ${hookStats.received - hookStats.reported} new, ${hookStats.received} in total, ${hookStats.inFlight} waiting, slowest answer ${hookStats.slowest} ms, pending API requests ${socket.getPendingRequestCount()}`);
+        hookStats.reported = hookStats.received;
+        hookStats.slowest = 0;
+      }
+    }, STATS_INTERVAL_MS);
+    statsTimer.unref();
+    cleanups.push(() => clearInterval(statsTimer));
 
     const createHookHandler = (hookName, isDirectory) => {
       return async (data, accept, reject) => {
         const started = Date.now();
+        hookStats.received++;
+        hookStats.inFlight++;
         let rejectMessage = null;
         try {
           // Never keep the application waiting: if the check takes too long, the item is accepted
@@ -267,6 +298,9 @@ export default function (socket, extension) {
         }
 
         const elapsed = Date.now() - started;
+        hookStats.inFlight--;
+        hookStats.answered++;
+        hookStats.slowest = Math.max(hookStats.slowest, elapsed);
         if (elapsed > SLOW_HOOK_MS) {
           logger.warn(`${hookName} was slow (${elapsed} ms): ${data && data.path}`);
         }
@@ -419,20 +453,129 @@ export default function (socket, extension) {
       name: 'ADL checker',
     };
 
-    const addHook = async (hookName, isDirectory) => {
-      try {
-        await socket.addHook('share', hookName, createHookHandler(hookName, isDirectory), subscriberInfo);
-      } catch (e) {
-        const text = `ADL checker: failed to add the hook ${hookName}: ${e.message}`;
-        logger.error(text);
-        postEvent(text, 'error');
-      }
+    // The application asks about every file separately during share refreshes and waits for each answer, which can
+    // make refreshes of big shares very slow. The per-file hook is therefore used only when files must be kept out
+    // of the share. Otherwise matches are reported after the files have been hashed (see below).
+    const hookRemovers = {};
+    let hookSync = Promise.resolve();
+
+    const syncHooks = () => {
+      hookSync = hookSync.then(async () => {
+        if (stopped) {
+          return;
+        }
+
+        const check = !!settings.getValue('check_share_changes');
+        const wanted = {
+          [HOOK_NEW_DIRECTORY]: check,
+          [HOOK_FILE]: check && !!settings.getValue('reject_matched'),
+        };
+
+        for (const hookName of Object.keys(wanted)) {
+          if (wanted[hookName] && !hookRemovers[hookName]) {
+            try {
+              hookRemovers[hookName] = await socket.addHook('share', hookName, createHookHandler(hookName, hookName === HOOK_NEW_DIRECTORY), subscriberInfo);
+              logger.info(`Hook ${hookName} added`);
+            } catch (e) {
+              const text = `ADL checker: failed to add the hook ${hookName}: ${e.message}`;
+              logger.error(text);
+              postEvent(text, 'error');
+            }
+          } else if (!wanted[hookName] && hookRemovers[hookName]) {
+            const remove = hookRemovers[hookName];
+            delete hookRemovers[hookName];
+            try {
+              await remove();
+              logger.info(`Hook ${hookName} removed`);
+            } catch (e) {
+              logger.error(`Failed to remove the hook ${hookName}: ${e.message}`);
+            }
+          }
+        }
+      }).catch(e => logger.error(`Failed to update the hooks: ${e.stack || e.message}`));
+
+      return hookSync;
     };
 
     await loadAdl(true);
+    await syncHooks();
 
-    await addHook(HOOK_FILE, false);
-    await addHook(HOOK_NEW_DIRECTORY, true);
+    // ---------------------------------------------------------------------------------------------
+    // HASHED DIRECTORIES
+    // After a directory has been hashed, its files are checked from the disk (outside the share refresh, nobody waits for this)
+    const hashedQueue = new Set();
+    let hashedRunning = false;
+
+    const checkHashedDirectory = async (directory) => {
+      await evaluateItem(directory, true, statSize, false);
+
+      let entries;
+      try {
+        entries = await fs.promises.readdir(directory, { withFileTypes: true });
+      } catch (e) {
+        logger.verbose(`Hashed directory check: failed to read ${directory}: ${e.message}`);
+        return;
+      }
+
+      for (const entry of entries) {
+        if (entry.isFile()) {
+          await evaluateItem(path.join(directory, entry.name), false, statSize, false);
+        }
+      }
+    };
+
+    const drainHashedQueue = async () => {
+      if (hashedRunning) {
+        return;
+      }
+
+      hashedRunning = true;
+      try {
+        while (hashedQueue.size && !stopped) {
+          const [directory] = hashedQueue;
+          hashedQueue.delete(directory);
+          try {
+            await checkHashedDirectory(directory);
+          } catch (e) {
+            logger.error(`Hashed directory check failed for ${directory}: ${e.stack || e.message}`);
+          }
+        }
+      } finally {
+        hashedRunning = false;
+      }
+    };
+
+    const onDirectoryHashed = (data) => {
+      if (!settings.getValue('check_share_changes') || !adl.rules.length) {
+        return;
+      }
+
+      const directory = data && data.path;
+      if (typeof directory !== 'string' || !directory.length) {
+        if (!loggedPayload['hashed-invalid']) {
+          loggedPayload['hashed-invalid'] = true;
+          logger.error(`Unexpected hasher_directory_finished data without a path (properties: ${Object.keys(data || {}).join(', ')})`);
+        }
+
+        return;
+      }
+
+      if (!loggedPayload['hashed']) {
+        loggedPayload['hashed'] = true;
+        logger.info(`hasher_directory_finished data properties: ${Object.keys(data).join(', ')}`);
+      }
+
+      hashedQueue.add(stripTrailingSeparators(directory));
+      drainHashedQueue();
+    };
+
+    try {
+      await socket.addListener('hash', 'hasher_directory_finished', onDirectoryHashed);
+    } catch (e) {
+      const text = `ADL checker: failed to listen to hashed directories: ${e.message}`;
+      logger.error(text);
+      postEvent(text, 'error');
+    }
 
     // ---------------------------------------------------------------------------------------------
     // CHAT COMMANDS
@@ -541,6 +684,12 @@ export default function (socket, extension) {
     } catch (e) {
       logger.error(`Failed to add the menu items: ${e.message}`);
     }
+
+    settings.onValuesUpdated = (updated) => {
+      if (Object.prototype.hasOwnProperty.call(updated, 'check_share_changes') || Object.prototype.hasOwnProperty.call(updated, 'reject_matched')) {
+        syncHooks();
+      }
+    };
 
     cleanups.push(() => {
       stopScan = true;

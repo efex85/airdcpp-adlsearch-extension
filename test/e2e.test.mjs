@@ -85,8 +85,10 @@ after(async () => {
 test('registers settings, hooks, listeners and signals ready', () => {
   const keys = server.state.definitions.map(d => d.key).sort();
   assert.deepEqual(keys, ['check_share_changes', 'max_warnings', 'reject_matched', 'respect_ignorelist']);
-  assert.ok(server.state.hooks.share_file_validation_hook, 'file hook');
   assert.ok(server.state.hooks.new_share_directory_validation_hook, 'directory hook');
+  // The per-file hook makes share refreshes slow: it must not be used unless files are kept out of the share
+  assert.ok(!server.state.hooks.share_file_validation_hook, 'no per-file hook by default');
+  assert.ok(server.state.listeners.includes('hash/listeners/hasher_directory_finished'));
   assert.ok(server.state.listeners.some(p => p === 'hubs/listeners/hub_text_command'));
   assert.ok(server.state.listeners.some(p => p === 'private_chat/listeners/private_chat_text_command'));
   assert.ok(server.state.listeners.some(p => p === `extensions/${EXT_NAME}/listeners/extension_settings_updated`) ||
@@ -94,61 +96,58 @@ test('registers settings, hooks, listeners and signals ready', () => {
   assert.equal(eventsWith('loaded 4 rules')[0].severity, 'info');
 });
 
-test('a matching file is reported as a WARNING and accepted by default', async () => {
-  const completion = await server.fireHook('share_file_validation_hook', { path: '/share/virus.exe' });
+const dirEvent = (dir) => server.sendEvent('hasher_directory_finished', { path: dir + '/', size: 0 });
+const settle = (ms = 400) => new Promise(r => setTimeout(r, ms));
+
+test('default mode: matches in a hashed directory are reported as WARNINGS (no per-file hook needed)', async () => {
+  const dir = path.join(shareRoot, 'Movie.A');
+  fs.mkdirSync(dir);
+  fs.writeFileSync(path.join(dir, 'virus.exe'), 'x');
+  fs.writeFileSync(path.join(dir, 'small.mkv'), Buffer.alloc(10));
+  fs.writeFileSync(path.join(dir, 'big.mkv'), Buffer.alloc(5000));
+  fs.writeFileSync(path.join(dir, 'clean.txt'), 'x');
+  fs.writeFileSync(path.join(dir, 'archive.zip'), 'x');
+  dirEvent(dir);
+  await server.waitFor(() => eventsWith('virus.exe').length === 1 && eventsWith('small.mkv').length === 1, 5000, 'warnings');
+  const [exe] = eventsWith('virus.exe');
+  assert.equal(exe.severity, 'warning');
+  assert.match(exe.text, /Executables/);
+  assert.doesNotMatch(exe.text, /not shared/);
+  assert.match(eventsWith('small.mkv')[0].text, /Too Small Video/);
+  await settle();
+  // Size limit respected, clean files and inactive rules ignored
+  assert.equal(eventsWith('big.mkv').length + eventsWith('clean.txt').length + eventsWith('archive.zip').length, 0);
+});
+
+test('default mode: the same file is not warned about again', async () => {
+  dirEvent(path.join(shareRoot, 'Movie.A'));
+  await settle(800);
+  assert.equal(eventsWith('virus.exe').length, 1);
+});
+
+test('default mode: a hashed directory whose own name matches is reported', async () => {
+  const dir = path.join(shareRoot, 'Movie.A', 'Sample');
+  fs.mkdirSync(dir);
+  dirEvent(dir);
+  await server.waitFor(() => eventsWith('Sample').length === 1, 5000, 'directory warning');
+  assert.match(eventsWith('Sample')[0].text, /\(directory\).*Sample Dirs/);
+});
+
+test('default mode: new directories are checked with the (cheap) directory hook', async () => {
+  const completion = await server.fireHook('new_share_directory_validation_hook', { path: '/share/Other/Sample', new_parent: true });
   assert.equal(completion.action, 'resolve');
-  await server.waitFor(() => eventsWith('/share/virus.exe').length === 1, 5000, 'warning');
-  const [event] = eventsWith('/share/virus.exe');
-  assert.equal(event.severity, 'warning');
-  assert.match(event.text, /Executables/);
-  assert.doesNotMatch(event.text, /not shared/);
+  await server.waitFor(() => eventsWith('/share/Other/Sample').length === 1, 5000, 'directory warning');
+  assert.equal(eventsWith('/share/Other/Sample')[0].severity, 'warning');
 });
 
-test('the same file is not warned about again', async () => {
-  const completion = await server.fireHook('share_file_validation_hook', { path: '/share/virus.exe' });
-  assert.equal(completion.action, 'resolve');
-  await new Promise(r => setTimeout(r, 300));
-  assert.equal(eventsWith('/share/virus.exe').length, 1);
-});
-
-test('clean files and inactive rules produce nothing', async () => {
-  for (const p of ['/share/readme.txt', '/share/archive.zip']) {
-    const completion = await server.fireHook('share_file_validation_hook', { path: p });
-    assert.equal(completion.action, 'resolve');
-  }
-  await new Promise(r => setTimeout(r, 300));
-  assert.equal(eventsWith('/share/readme.txt').length + eventsWith('/share/archive.zip').length, 0);
-});
-
-test('size limits use the size from the hook data (the file system is not touched)', async () => {
-  // These files don't exist: the answer can only come from the `size` in the hook data
-  const tinyPath = '/nonexistent/tiny.mkv';
-  const hugePath = '/nonexistent/huge.mkv';
-  assert.equal((await server.fireHook('share_file_validation_hook', { path: tinyPath, size: 10 })).action, 'resolve');
-  assert.equal((await server.fireHook('share_file_validation_hook', { path: hugePath, size: 5000 })).action, 'resolve');
-  await server.waitFor(() => eventsWith(tinyPath).length === 1, 5000, 'tiny.mkv warning');
-  await new Promise(r => setTimeout(r, 300));
-  assert.equal(eventsWith(hugePath).length, 0);
-});
-
-test('size limits fall back to the real file size when the hook data has no size', async () => {
-  const small = path.join(shareRoot, 'small.mkv');
-  const big = path.join(shareRoot, 'big.mkv');
-  fs.writeFileSync(small, Buffer.alloc(10));
-  fs.writeFileSync(big, Buffer.alloc(5000));
-  await server.fireHook('share_file_validation_hook', { path: small });
-  await server.fireHook('share_file_validation_hook', { path: big });
-  await server.waitFor(() => eventsWith(small).length === 1, 5000, 'small.mkv warning');
-  await new Promise(r => setTimeout(r, 300));
-  assert.equal(eventsWith(big).length, 0);
-  assert.match(eventsWith(small)[0].text, /Too Small Video/);
+test('reject mode: enabling it adds the per-file hook', async () => {
+  server.setSettings({ reject_matched: true });
+  await server.waitFor(() => server.state.hooks.share_file_validation_hook, 5000, 'file hook added');
 });
 
 test('reject mode: matched file is rejected with adl_match and marked as not shared', async () => {
-  server.setSettings({ reject_matched: true });
-  await new Promise(r => setTimeout(r, 300));
   fs.writeFileSync(path.join(shareRoot, 'other.exe'), 'x');
-  const completion = await server.fireHook('share_file_validation_hook', { path: path.join(shareRoot, 'other.exe') });
+  const completion = await server.fireHook('share_file_validation_hook', { path: path.join(shareRoot, 'other.exe'), size: 1 });
   assert.equal(completion.action, 'reject');
   assert.equal(completion.reject_id, 'adl_match');
   assert.match(completion.message, /Executables/);
@@ -158,8 +157,16 @@ test('reject mode: matched file is rejected with adl_match and marked as not sha
 });
 
 test('reject mode: clean files are still accepted', async () => {
-  const completion = await server.fireHook('share_file_validation_hook', { path: '/share/clean.txt' });
+  const completion = await server.fireHook('share_file_validation_hook', { path: '/share/clean.txt', size: 1 });
   assert.equal(completion.action, 'resolve');
+});
+
+test('reject mode: size limits use the size from the hook data (the file system is not touched)', async () => {
+  // These files don't exist: the answer can only come from the `size` in the hook data
+  const tiny = await server.fireHook('share_file_validation_hook', { path: '/nonexistent/tiny.mkv', size: 10 });
+  const huge = await server.fireHook('share_file_validation_hook', { path: '/nonexistent/huge.mkv', size: 5000 });
+  assert.equal(tiny.action, 'reject');
+  assert.equal(huge.action, 'resolve');
 });
 
 test('reject mode: a new matching directory is rejected', async () => {
@@ -168,25 +175,49 @@ test('reject mode: a new matching directory is rejected', async () => {
   assert.equal(completion.reject_id, 'adl_match');
 });
 
-test('turning the share check off stops warnings and rejections', async () => {
-  server.setSettings({ check_share_changes: false });
-  await new Promise(r => setTimeout(r, 300));
-  const completion = await server.fireHook('share_file_validation_hook', { path: '/share/third.exe' });
-  assert.equal(completion.action, 'resolve');
-  await new Promise(r => setTimeout(r, 300));
-  assert.equal(eventsWith('/share/third.exe').length, 0);
-  server.setSettings({ check_share_changes: true });
-  await new Promise(r => setTimeout(r, 300));
-});
-
-test('a payload without a path is accepted (never blocks the share)', async () => {
+test('reject mode: a payload without a path is accepted (never blocks the share)', async () => {
   const completion = await server.fireHook('share_file_validation_hook', { something: 1 });
   assert.equal(completion.action, 'resolve');
 });
 
+test('a hashed directory check keeps the "not shared" mark of a rejected file', async () => {
+  const askList = async () => {
+    const count = server.state.statusMessages.length;
+    server.sendEvent('hub_text_command', { command: 'adl', args: ['list'], permissions: ['admin'], owner: 'x' }, 7);
+    await server.waitFor(() => server.state.statusMessages.length === count + 1, 5000, 'status message');
+    return server.state.statusMessages.at(-1).data.text.match(/(\d+) kept out of share/)[1];
+  };
+
+  const before = await askList();
+  assert.ok(Number(before) >= 1);
+  dirEvent(shareRoot); // contains other.exe
+  await settle(800);
+  assert.equal(await askList(), before);
+});
+
+test('turning the share check off removes both hooks, turning it on adds them back', async () => {
+  server.setSettings({ check_share_changes: false });
+  await server.waitFor(() => !server.state.hooks.share_file_validation_hook && !server.state.hooks.new_share_directory_validation_hook, 5000, 'hooks removed');
+  const before = eventsWith('late.exe').length;
+  fs.writeFileSync(path.join(shareRoot, 'Movie.A', 'late.exe'), 'x');
+  dirEvent(path.join(shareRoot, 'Movie.A'));
+  await settle(800);
+  assert.equal(eventsWith('late.exe').length, before, 'no warnings while the check is off');
+
+  server.setSettings({ check_share_changes: true });
+  await server.waitFor(() => server.state.hooks.share_file_validation_hook && server.state.hooks.new_share_directory_validation_hook, 5000, 'hooks added back');
+});
+
+test('turning reject mode off removes the per-file hook', async () => {
+  server.setSettings({ reject_matched: false });
+  await server.waitFor(() => !server.state.hooks.share_file_validation_hook, 5000, 'file hook removed');
+  assert.ok(server.state.hooks.new_share_directory_validation_hook);
+});
+
 test('/adl list answers in the chat', async () => {
+  const count = server.state.statusMessages.length;
   server.sendEvent('hub_text_command', { command: 'adl', args: ['list'], permissions: ['admin'], owner: 'x' }, 7);
-  await server.waitFor(() => server.state.statusMessages.length >= 1, 5000, 'status message');
+  await server.waitFor(() => server.state.statusMessages.length === count + 1, 5000, 'status message');
   const msg = server.state.statusMessages.at(-1);
   assert.equal(msg.path, 'hubs/7/status_message');
   assert.match(msg.data.text, /matched items/);
@@ -254,21 +285,28 @@ test('matches persist across restarts and are not warned about again', async () 
   server.state.hooks = {};
   const before = eventsWith('setup.bat').length;
   await startExtension();
-  await server.waitFor(() => server.state.hooks.share_file_validation_hook, 5000, 'hook');
-  await server.fireHook('share_file_validation_hook', { path: setupBat });
-  await new Promise(r => setTimeout(r, 300));
+  await server.waitFor(() => server.state.hooks.new_share_directory_validation_hook, 5000, 'hook');
+  dirEvent(path.join(shareRoot, 'Release'));
+  await settle(800);
   assert.equal(eventsWith('setup.bat').length, before);
 });
 
 test('changing ADLSearch.xml is NOT picked up automatically, only on reload (command or menu)', async () => {
+  const r1 = path.join(shareRoot, 'R1');
+  const r2 = path.join(shareRoot, 'R2');
+  fs.mkdirSync(r1);
+  fs.mkdirSync(r2);
+  fs.writeFileSync(path.join(r1, 'lib.dll'), 'x');
+  fs.writeFileSync(path.join(r2, 'ctl.ocx'), 'x');
+
   fs.writeFileSync(adlPath, ADL.replace('(exe|bat)', '(exe|bat|dll)'));
   const before = eventsWith('loaded 4 rules').length;
 
   // No automatic check
-  await new Promise(r => setTimeout(r, 1500));
-  await server.fireHook('share_file_validation_hook', { path: '/share/lib1.dll' });
-  await new Promise(r => setTimeout(r, 300));
-  assert.equal(eventsWith('lib1.dll').length, 0);
+  await settle(1500);
+  dirEvent(r1);
+  await settle(600);
+  assert.equal(eventsWith('lib.dll').length, 0);
 
   // Reload from the menu
   server.sendEvent('extension_menuitem_selected', {
@@ -276,14 +314,14 @@ test('changing ADLSearch.xml is NOT picked up automatically, only on reload (com
     selected_ids: [EXT_NAME], entity_id: undefined, permissions: ['admin'], supports: ['form'], form_values: {},
   });
   await server.waitFor(() => eventsWith('loaded 4 rules').length === before + 1, 5000, 'menu reload');
-  await server.fireHook('share_file_validation_hook', { path: '/share/lib2.dll' });
-  await server.waitFor(() => eventsWith('lib2.dll').length === 1, 5000, 'dll warning');
+  dirEvent(r1);
+  await server.waitFor(() => eventsWith('lib.dll').length === 1, 5000, 'dll warning');
 
   // Reload by command
   fs.writeFileSync(adlPath, ADL.replace('(exe|bat)', '(exe|bat|ocx)'));
   server.sendEvent('hub_text_command', { command: 'adl', args: ['reload'], permissions: ['admin'], owner: 'x' }, 7);
   await server.waitFor(() => eventsWith('loaded 4 rules').length === before + 2, 5000, 'command reload');
-  await server.fireHook('share_file_validation_hook', { path: '/share/ctl.ocx' });
+  dirEvent(r2);
   await server.waitFor(() => eventsWith('ctl.ocx').length === 1, 5000, 'ocx warning');
 });
 

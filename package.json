@@ -1,6 +1,6 @@
 {
   "name": "airdcpp-adl-checker",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Checks the share against an ADLSearch.xml file: warns in the event log, can keep matching files out of share and lists all matches",
   "license": "MIT",
   "author": {

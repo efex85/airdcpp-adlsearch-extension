@@ -126,6 +126,12 @@ export const startFakeServer = async ({ platform = 'linux', apiFeatureLevel = 4,
       return notify();
     }
 
+    if (method === 'DELETE' && (m = path.match(/^[a-z_]+\/hooks\/([a-z_]+)$/))) {
+      delete state.hooks[m[1]];
+      ok({});
+      return notify();
+    }
+
     if (method === 'POST' && (m = path.match(/^[a-z_]+\/hooks\/([a-z_]+)$/))) {
       state.hooks[m[1]] = data;
       ok({});

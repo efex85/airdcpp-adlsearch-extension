@@ -16,6 +16,8 @@ fs.copyFileSync(path.join(root, 'test', 'ADLSearch.xml'), path.join(tmp, 'Settin
 fs.copyFileSync(path.join(root, 'dist', 'main.js'), path.join(tmp, 'main.js'));
 
 const server = await startFakeServer({ apiFeatureLevel: 6 });
+// The per-file hook is only registered in reject mode
+server.state.settings.reject_matched = true;
 const child = spawn(process.execPath, [path.join(tmp, 'main.js'), '--name=airdcpp-adl-checker',
   `--apiUrl=127.0.0.1:${server.port}/api/v1/`, '--authToken=t', `--logPath=${path.join(tmp, 'logs')}/`,
   `--settingsPath=${configPath}`, `--appPid=${process.pid}`, '--signalReady=true'], { stdio: 'inherit' });
