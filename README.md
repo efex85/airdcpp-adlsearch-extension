@@ -7,7 +7,7 @@ Quick install link for latest version: https://github.com/efex85/airdcpp-adlsear
 
 1. Get a good ADLSearch.xml to use (not included!)
 2. Place ADLSearch.xml in your /config folder
-3. Gp to AirDC  web client > Settings > Extensions > Extension catalog > Install from url > Paste the above link to the latest version.
+3. Go to AirDC  web client > Settings > Extensions > Extension catalog > Install from url > Paste the above link to the latest version.
 4. Click "Manage installed", and set the plugins settings as you want.
 5. Profit!
 
