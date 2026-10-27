@@ -17,7 +17,7 @@ Available commands:
 - /adl list - a small quick info posted in the chat (for your eyes only)
 - /adl reload - Reloads the ADLSearch.xml (if you make changes to it and dont want to restart the client)
 
-You can also access the above funtions trough the Manage dropdown for the extension.
+You can also access the above functions trough the 'Manage' dropdown for the extension.
 
 Note: "Do not share matched files and directories" is NOT recommended, as it checkes every file - your hashing speed will take a dive. But use it if you want. :-)
 
