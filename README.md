@@ -19,6 +19,8 @@ Available commands:
 
 You can also access the above funtions trough the Manage dropdown for the extension.
 
+Note: "Do not share matched files and directories" is NOT recommended, as it checkes every file - your hashing speed will take a dive. But use it if you want. :-)
+
 <img width="1520" height="868" alt="1" src="https://github.com/user-attachments/assets/1ad778a9-6e24-49a0-a9ea-296b5382a9b1" />
 <img width="1931" height="1041" alt="2" src="https://github.com/user-attachments/assets/00ffd56a-37f3-4334-810f-ddf699e1ba77" />
 <img width="1942" height="1047" alt="3" src="https://github.com/user-attachments/assets/26287809-ed97-4805-af42-8336e661b786" />
