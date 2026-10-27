@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { convertPattern, compileAdlRegex } from '../src/regex-convert.js';
 import { parseAdl, matchItem, toItem } from '../src/adl.js';
 import { formatReport } from '../src/report.js';
+import { withDeadline } from '../src/util.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
@@ -57,4 +58,11 @@ test('report lists unreadable items', () => {
   });
   assert.match(text, /Unreadable: {2}1 /);
   assert.match(text, /\/a\/locked {4}\[EACCES: permission denied\]/);
+});
+
+test('withDeadline returns the fallback for a promise that never finishes', async () => {
+  const started = Date.now();
+  assert.equal(await withDeadline(new Promise(() => {}), 50, 'late'), 'late');
+  assert.ok(Date.now() - started < 1000);
+  assert.equal(await withDeadline(Promise.resolve('fast'), 1000, 'late'), 'fast');
 });

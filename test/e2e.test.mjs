@@ -120,7 +120,18 @@ test('clean files and inactive rules produce nothing', async () => {
   assert.equal(eventsWith('/share/readme.txt').length + eventsWith('/share/archive.zip').length, 0);
 });
 
-test('size limits use the real file size', async () => {
+test('size limits use the size from the hook data (the file system is not touched)', async () => {
+  // These files don't exist: the answer can only come from the `size` in the hook data
+  const tinyPath = '/nonexistent/tiny.mkv';
+  const hugePath = '/nonexistent/huge.mkv';
+  assert.equal((await server.fireHook('share_file_validation_hook', { path: tinyPath, size: 10 })).action, 'resolve');
+  assert.equal((await server.fireHook('share_file_validation_hook', { path: hugePath, size: 5000 })).action, 'resolve');
+  await server.waitFor(() => eventsWith(tinyPath).length === 1, 5000, 'tiny.mkv warning');
+  await new Promise(r => setTimeout(r, 300));
+  assert.equal(eventsWith(hugePath).length, 0);
+});
+
+test('size limits fall back to the real file size when the hook data has no size', async () => {
   const small = path.join(shareRoot, 'small.mkv');
   const big = path.join(shareRoot, 'big.mkv');
   fs.writeFileSync(small, Buffer.alloc(10));

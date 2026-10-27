@@ -201,6 +201,12 @@ export const startFakeServer = async ({ platform = 'linux', apiFeatureLevel = 4,
       await waitFor(() => state.completions[id], 8000, `hook completion ${hookName}`);
       return state.completions[id];
     },
+    // Fire a hook without waiting for the answer; returns the completion id
+    sendHook: (hookName, data) => {
+      const id = nextCompletion++;
+      send({ event: hookName, data, completion_id: id });
+      return id;
+    },
     sendEvent: (event, data, id) => send({ event, data, id }),
     setSettings: (values) => {
       Object.assign(state.settings, values);

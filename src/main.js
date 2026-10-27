@@ -10,6 +10,7 @@ import { parseAdl, toItem, matchItem, categoriesOf, parseIgnoreList, stripTraili
 import { createStore, ACTION_WARNED, ACTION_REJECTED, ACTION_SCAN } from './store.js';
 import { formatReport, formatSummary } from './report.js';
 import { scanPaths, statSize } from './scanner.js';
+import { withDeadline } from './util.js';
 
 const CONFIG_VERSION = 1;
 const SCAN_ACCESS = 'settings_edit';
@@ -21,6 +22,11 @@ export const HOOK_NEW_DIRECTORY = 'new_share_directory_validation_hook';
 const hasScanAccess = (permissions) => {
   return permissions.indexOf('admin') !== -1 || permissions.indexOf(SCAN_ACCESS) !== -1;
 };
+
+// Maximum time for answering a file/directory check of the application
+const HOOK_DEADLINE_MS = 3000;
+const SLOW_HOOK_MS = 500;
+const TIMED_OUT = Symbol('timed out');
 
 const READ_ERRORS = {
   EACCES: 'permission denied',
@@ -190,7 +196,8 @@ export default function (socket, extension) {
 
     let loggedPayload = {};
 
-    // The hook payload of files is not documented, the extension needs only the path
+    // AirDC++ waits for the answer of every file during share refreshes, so the answer must always be quick.
+    // The hook data has `path` and `size` (seen in the extension log), so the file system is not touched at all.
     const checkHookItem = async (hookName, data, isDirectory) => {
       if (!settings.getValue('check_share_changes') || !adl.rules.length) {
         return null;
@@ -217,7 +224,8 @@ export default function (socket, extension) {
         return null;
       }
 
-      const matched = await matchItem(adl.rules, item, statSize);
+      const getSize = Number.isFinite(data.size) && data.size >= 0 ? async () => data.size : statSize;
+      const matched = await matchItem(adl.rules, item, getSize);
       if (!matched.length) {
         store.remove(item.path);
         return null;
@@ -243,12 +251,24 @@ export default function (socket, extension) {
 
     const createHookHandler = (hookName, isDirectory) => {
       return async (data, accept, reject) => {
+        const started = Date.now();
         let rejectMessage = null;
         try {
-          rejectMessage = await checkHookItem(hookName, data, isDirectory);
+          // Never keep the application waiting: if the check takes too long, the item is accepted
+          const result = await withDeadline(checkHookItem(hookName, data, isDirectory), HOOK_DEADLINE_MS, TIMED_OUT);
+          if (result === TIMED_OUT) {
+            logger.error(`${hookName} took more than ${HOOK_DEADLINE_MS} ms for ${data && data.path}, the item was accepted`);
+          } else {
+            rejectMessage = result;
+          }
         } catch (e) {
           // Never block the share because of an extension error
           logger.error(`${hookName} failed for ${JSON.stringify(data)}: ${e.stack || e.message}`);
+        }
+
+        const elapsed = Date.now() - started;
+        if (elapsed > SLOW_HOOK_MS) {
+          logger.warn(`${hookName} was slow (${elapsed} ms): ${data && data.path}`);
         }
 
         if (rejectMessage) {
