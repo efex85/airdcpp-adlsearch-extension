@@ -2,18 +2,18 @@ airdcpp web client adl-search extension
 
 Scans your share after the files and directories has been hashed and prints matched files in the Event Log. You can also run manual scans directly in the client, no need for external scripts. /adl matched also brings up shared files with permission issues so you can keep your share in order.
 
-Quick install link for latest version: https://github.com/efex85/airdcpp-adlsearch-extension/raw/main/quickinstall/airdcpp-adl-checker-1.0.7.tgz
+Quick install link for latest version: https://github.com/efex85/airdcpp-adlsearch-extension/raw/main/quickinstall/airdcpp-adl-checker-1.2.0.tgz
 
 
 1. Get a good ADLSearch.xml to use (not included!)
-2. Place ADLSearch.xml in your /config folder
+2. Place ADLSearch.xml in your /config folder (optional: place a url to a adlsearch.xml in 'manage config' in step 4)
 3. Go to AirDC  web client > Settings > Extensions > Extension catalog > Install from url > Paste the above link to the latest version.
 4. Click "Manage installed", and set the plugins settings as you want.
 5. Profit!
 
 Available commands:
 - /adl scan - Scans your share
-- /adl matches - Shows your matched files (bonus: also files with permission errors)
+- /adl matches - Shows your matched files
 - /adl list - a small quick info posted in the chat (for your eyes only)
 - /adl reload - Reloads the ADLSearch.xml (if you make changes to it and dont want to restart the client)
 
