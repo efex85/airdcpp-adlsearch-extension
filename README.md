@@ -16,6 +16,7 @@ Available commands:
 - /adl matches - Shows your matched files
 - /adl list - a small quick info posted in the chat (for your eyes only)
 - /adl reload - Reloads the ADLSearch.xml (if you make changes to it and dont want to restart the client)
+- /adl update - if you set and url to a ADLSearch.xml and wish to 'install' it, or the online source is updated. previous file is saved as .bak.
 
 You can also access the above functions trough the 'Manage' dropdown for the extension.
 
